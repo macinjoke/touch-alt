@@ -4,6 +4,7 @@ import test from 'ava'
 import del from 'del'
 import uuid from 'uuid'
 import fn from '.'
+import sinon from 'sinon'
 
 test.before(() => {
   process.chdir(__dirname)
@@ -19,11 +20,6 @@ test.beforeEach(t => {
 
 test.afterEach.always(t => {
   Object.keys(t.context).forEach(p => del.sync(t.context[p]))
-})
-
-test('no input and no flags', t => {
-  const result = fn()
-  t.is(result, undefined)
 })
 
 test('run', t => {
@@ -71,15 +67,19 @@ test('--overwrite=false', t => {
 
 test('--list with no target directory', t => {
   const { targetPath } = t.context
-  const result = fn(undefined, { dirPath: targetPath, list: true })
-  t.is(result, 'no template files')
+  const mock = sinon.mock(console)
+  mock.expects('log').withArgs('no template files')
+  fn(undefined, { dirPath: targetPath, list: true })
+  t.is(true, mock.verify())
 })
 
 test('--list with empty targets', t => {
   const { targetPath } = t.context
   fs.mkdirSync(targetPath)
-  const result = fn(undefined, { dirPath: targetPath, list: true })
-  t.is(result, 'no template files')
+  const mock = sinon.mock(console)
+  mock.expects('log').withArgs('no template files')
+  fn(undefined, { dirPath: targetPath, list: true })
+  t.is(true, mock.verify())
 })
 
 test('--list with targets', t => {
@@ -87,9 +87,11 @@ test('--list with targets', t => {
   fs.mkdirSync(targetPath)
   fs.writeFileSync(targetFilePath, 'foo', 'utf-8')
   fs.writeFileSync(`${targetFilePath}2`, 'bar', 'utf-8')
+  const mock = sinon.mock(console)
   const files = fs.readdirSync(targetPath)
-  const result = fn(undefined, { dirPath: targetPath, list: true })
-  t.is(result, `${files[0]}\n${files[1]}`)
+  mock.expects('log').withArgs(`${files[0]}\n${files[1]}`)
+  fn(undefined, { dirPath: targetPath, list: true })
+  t.is(true, mock.verify())
 })
 
 test('throw err', t => {

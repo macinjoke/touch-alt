@@ -41,11 +41,10 @@ const cli = meow(
 
 updateNotifier({ pkg: cli.pkg }).notify()
 
+const [input] = cli.input
+
 try {
-  const output = fn(cli.input[0], cli.flags)
-  if (output) {
-    console.log(output)
-  }
+  fn(input, cli.flags)
 } catch (err) {
   if (err.name === 'CpyError') {
     console.log(err.message)

@@ -11,17 +11,17 @@ module.exports = (input, opts) => {
 
   const configPath = opts.dirPath || path.join(os.homedir(), '.touch-alt')
 
-  if (input === undefined) {
-    if (opts.list) {
-      if (!pathExists.sync(configPath)) {
-        return 'no template files'
-      }
-      const files = fs.readdirSync(configPath)
-      if (files.length === 0) {
-        return 'no template files'
-      }
-      return files.join('\n')
+  if (input === undefined && opts.list) {
+    if (!pathExists.sync(configPath)) {
+      console.log('no template files')
+      return
     }
+    const files = fs.readdirSync(configPath)
+    if (files.length === 0) {
+      console.log('no template files')
+      return
+    }
+    console.log(files.join('\n'))
     return
   }
   if (typeof input !== 'string') {
