@@ -13,7 +13,7 @@ const cli = meow(
   Options
   -a, --add         Create new template file
   -o, --overwrite   Overwrite by template
-  -l, --list        show template file list
+  -l, --list        Show template file list
 
   Example
   $ touch-alt .editorconfig
